@@ -32,10 +32,6 @@ export class ProductRepository {
             Key: { id }
         }).promise();
 
-        if (!result.Item) {
-            throw new Error(`Product with id ${id} not found`);
-        }
-
         return result.Item as Product;
     }
 
@@ -72,7 +68,7 @@ export class ProductRepository {
             TableName: this.productsDdb,
             Key: { id },
             ConditionExpression: 'attribute_exists(id)',
-            ReturnValues: 'UPDATE_NEW',
+            ReturnValues: 'UPDATED_NEW',
             UpdateExpression: 'set productName = :productName, code = :code, price = :price, model = :model',
             ExpressionAttributeValues: {
                 ':productName': product.productName,

@@ -39,12 +39,13 @@ export class ProductsAppStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(10),
       bundling: {
         minify: true,
-        sourceMap: false,
+        sourceMap: false, 
       },
       environment: {
         PRODUCTS_DDB: this.productsDdb.tableName,
       },
       layers: [productsLayer],
+      tracing: lambda.Tracing.ACTIVE,
     })
     this.productsDdb.grantReadData(this.productsFetchHandler)
 
@@ -57,12 +58,13 @@ export class ProductsAppStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(10),
       bundling: {
         minify: true,
-        sourceMap: false,
+        sourceMap: false,   
       },
       environment: {
         PRODUCTS_DDB: this.productsDdb.tableName,
       },
       layers: [productsLayer],
+      tracing: lambda.Tracing.ACTIVE,
     })
     this.productsDdb.grantReadWriteData(this.productsAdminHandler)
   }
