@@ -31,7 +31,7 @@ export class OrderRepository {
     }
 
     async createOrder(order: Order): Promise<Order> {
-        order.sk = `ORDER#${uuid()}`;
+        order.sk = uuid();
         order.createdAt = Date.now();
 
         await this.ddbClient.put({

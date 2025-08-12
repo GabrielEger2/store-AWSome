@@ -21,9 +21,7 @@ export class OrdersAppStack extends cdk.Stack {
         partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
         sortKey: { name: 'sk', type: dynamodb.AttributeType.STRING },
         billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-        removalPolicy: cdk.RemovalPolicy.DESTROY,
-        readCapacity: 1,
-        writeCapacity: 1,
+        removalPolicy: cdk.RemovalPolicy.DESTROY
     });
 
     const ordersLayerArn = ssm.StringParameter.valueForStringParameter(this, 'OrdersLayerVersionArn');
