@@ -15,10 +15,10 @@ const lambdaClient = new Lambda();
 const productRepository = new ProductRepository(ddbClient, productsDdb);
 
 export async function handler(event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> {
+    const apiRequestId = event.requestContext.requestId
     const lambdaRequestId = context.awsRequestId;
-    const apiRequestId = event.requestContext.requestId;
 
-    console.log(`API Gateway Request ID: ${apiRequestId} - Lambda Request ID: ${lambdaRequestId}`);
+    console.log(`API Gateway RequestId: ${apiRequestId} - LambdaRequestId: ${lambdaRequestId}`);
 
     if (event.resource === "/products") {
         const method = event.httpMethod;
