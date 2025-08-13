@@ -25,7 +25,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
     if (method === "GET") {
         if (event.queryStringParameters) {
             const email = event.queryStringParameters?.email;
-            const orderId = event.queryStringParameters?.id;
+            const orderId = event.queryStringParameters?.orderId;
 
             if (email) {
                 if (orderId) {
@@ -78,9 +78,9 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
         };
     } else if (method === "DELETE") {
         const email = event.queryStringParameters!.email!;
-        const orderId = event.queryStringParameters!.id!;
+        const orderId = event.queryStringParameters!.orderId!;
 
-        const orderDelete = await orderRepository.deleteOrder(email, orderId)
+        const orderDelete = await orderRepository.deleteOrder(email, orderId);
 
         if (!orderDelete) {
             return {
