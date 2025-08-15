@@ -26,7 +26,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
             const product = JSON.parse(event.body!) as Product
             const productCreated = await productRepository.createProduct(product);
 
-            sendProductEvent(ProductEventType.CREATED, productCreated, "test@gmail.com", lambdaRequestId);
+            await sendProductEvent(ProductEventType.CREATED, productCreated, "test@gmail.com", lambdaRequestId);
             return {
                 statusCode: 201,
                 body: JSON.stringify(productCreated),
@@ -45,7 +45,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
             try {
                 const productUpdated = await productRepository.updateProduct(productId!, product);
 
-                sendProductEvent(ProductEventType.UPDATED, productUpdated, "test@gmail.com", lambdaRequestId);
+                await sendProductEvent(ProductEventType.UPDATED, productUpdated, "test@gmail.com", lambdaRequestId);
                 return {
                     statusCode: 200,
                     body: JSON.stringify(productUpdated),
@@ -68,7 +68,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
             try {
                 const deletedProduct = await productRepository.deleteProduct(productId!);
 
-                sendProductEvent(ProductEventType.DELETED, deletedProduct, "test@gmail.com", lambdaRequestId);
+                await sendProductEvent(ProductEventType.DELETED, deletedProduct, "test@gmail.com", lambdaRequestId);
                 return {
                     statusCode: 200,
                     body: JSON.stringify(deletedProduct),
@@ -97,19 +97,22 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
     };
 }
 
-function sendProductEvent(eventType: ProductEventType, product: Product, email: string, lambdaRequestId: string): void {
-    const productEvent: ProductEvent = {
-        requestId: lambdaRequestId,
-        eventType: eventType,
-        productId: product.id!,
-        productCode: product.code,
-        productPrice: product.price,
-        email: email,
-    };
+function sendProductEvent(eventType: ProductEventType,
+   product: Product, email: string, 
+   lambdaRequestId: string) {
 
-    lambdaClient.invoke({
-        FunctionName: productEventsFunctionName,
-        InvocationType: "Event",
-        Payload: JSON.stringify(productEvent),
-    }).promise();
+   const event: ProductEvent = {
+      email: email,
+      eventType: eventType,
+      productCode: product.code,
+      productId: product.id,
+      productPrice: product.price,
+      requestId: lambdaRequestId
+   }
+
+   return lambdaClient.invoke({
+      FunctionName: productEventsFunctionName,
+      Payload: JSON.stringify(event),
+      InvocationType: "Event"
+   }).promise()
 }
