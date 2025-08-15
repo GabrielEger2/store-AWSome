@@ -42,6 +42,7 @@ const ordersAppLayersStack = new OrdersAppLayersStack(app, 'OrdersAppLayers', {
 
 const ordersAppStack = new OrdersAppStack(app, 'OrdersApp', {
   productsDdb: productsAppStack.productsDdb,
+  eventsDdb: eventsDdbStack.table,
   tags: tags,
   env: env,
 });
@@ -50,6 +51,7 @@ productsAppStack.addDependency(productsAppLayersStack);
 productsAppStack.addDependency(eventsDdbStack);
 ordersAppStack.addDependency(ordersAppLayersStack);
 ordersAppStack.addDependency(productsAppStack);
+ordersAppStack.addDependency(eventsDdbStack);
 
 const awsomeStoreApiStack = new AwsomeStoreApiStack(app, 'AwsomeStoreApi', {
   productsFetchHandler: productsAppStack.productsFetchHandler,
