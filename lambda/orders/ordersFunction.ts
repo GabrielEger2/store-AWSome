@@ -112,7 +112,7 @@ export async function handler(event: APIGatewayProxyEvent, context: Context): Pr
 
 function sendOrderEvent(order: Order, eventType: OrderEventType, lambdaRequestId: string): Promise<SNS.PublishResponse> {
     const productCodes: string[] = []
-    order.products.forEach((product) => {
+    order.products?.forEach((product) => {
         productCodes.push(product.code)
     })
 
@@ -144,7 +144,7 @@ function sendOrderEvent(order: Order, eventType: OrderEventType, lambdaRequestId
 
 function convertToOrderResponse (order: Order): OrderResponse {
     const orderProducts: OrderProductResponse[] = []
-    order.products.forEach((product) => {
+    order.products?.forEach((product) => {
         orderProducts.push({
             code: product.code,
             price: product.price
@@ -163,7 +163,7 @@ function convertToOrderResponse (order: Order): OrderResponse {
             type: order.shipping.type as ShippingType,
             carrier: order.shipping.carrier as CarrierType
         },
-        products: orderProducts
+        products: orderProducts.length > 0 ? orderProducts : undefined
     }
 
     return orderResponse;
