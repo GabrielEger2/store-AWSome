@@ -22,6 +22,18 @@ export class EventsDdbStack extends cdk.Stack {
             removalPolicy: cdk.RemovalPolicy.DESTROY,
             timeToLiveAttribute: 'ttl',
             billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-        });            
+        });
+        this.table.addGlobalSecondaryIndex({
+            indexName: "emailIndex",
+            partitionKey: {
+                name: 'email',
+                type: dynamodb.AttributeType.STRING
+            },
+            sortKey: {
+                name: 'sk',
+                type: dynamodb.AttributeType.STRING
+            },
+            projectionType: dynamodb.ProjectionType.ALL
+        });
     }
 }

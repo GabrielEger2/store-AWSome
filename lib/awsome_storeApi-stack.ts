@@ -8,6 +8,7 @@ interface AwsomeStoreApiStackProps extends cdk.StackProps {
     productsFetchHandler: lambdaNodeJS.NodejsFunction;
     productsAdminHandler: lambdaNodeJS.NodejsFunction;
     ordersHandler: lambdaNodeJS.NodejsFunction;
+    orderEventsFetchHandler: lambdaNodeJS.NodejsFunction;
 }
 
 export class AwsomeStoreApiStack extends cdk.Stack {
@@ -120,7 +121,7 @@ export class AwsomeStoreApiStack extends cdk.Stack {
         'application/json': orderModel
       }
     });
-
+    
     const orderDeletionValidator = new apigateway.RequestValidator(this, 'OrderDeletionValidator', {
       restApi: api,
       requestValidatorName: 'OrderDeletionValidator',
@@ -134,6 +135,27 @@ export class AwsomeStoreApiStack extends cdk.Stack {
         'method.request.querystring.email': true,
       },
       requestValidator: orderDeletionValidator
+    });
+
+    // /orders/events
+    const orderEventsResource = ordersResource.addResource("events");
+
+    const orderEventsFetchValidator = new apigateway.RequestValidator(this, 'OrderEventsFetchValidator', {
+      restApi: api,
+      requestValidatorName: 'OrderEventsFetchValidator',
+      validateRequestParameters: true
+    });
+
+    const orderEventsFunctionIntegration = new apigateway.LambdaIntegration(props.orderEventsFetchHandler);
+
+    // /orders/events?email=<email> GET
+    // /orders/events?email=<email>&eventType=<orderId> GET
+    orderEventsResource.addMethod("GET", orderEventsFunctionIntegration, {
+      requestParameters: {
+        'method.request.querystring.email': true,
+        'method.request.querystring.eventType': false
+      },
+      requestValidator: orderEventsFetchValidator
     });
   }
 }

@@ -30,4 +30,33 @@ export class OrderEventRepository {
             Item: orderEvent
         }).promise()
     }
+
+    async getOrderEventsByEmail(email: string): Promise<OrderEventDdb[]> {
+        const data = await this.ddbClient.query({
+            TableName: this.eventsDdb,
+            IndexName: 'emailIndex',
+            KeyConditionExpression: '#e = :email AND begins_with(#sk, :p)',
+            ExpressionAttributeNames: { '#e': 'email', '#sk': 'sk' },
+            ExpressionAttributeValues: {
+            ':email': email,
+            ':p': 'ORDER_'
+            }
+        }).promise();
+
+        return data.Items as OrderEventDdb[];
+    }
+
+    async getOrderEventByEmailAndEventType(email: string, eventType: string): Promise<OrderEventDdb | null> {
+        const data = await this.ddbClient.query({
+            TableName: this.eventsDdb,
+            IndexName: 'emailIndex',
+            KeyConditionExpression: 'email = :email AND eventType = :eventType',
+            ExpressionAttributeValues: {
+                ':email': email,
+                ':eventType': eventType
+            }
+        }).promise();
+
+        return data.Items?.[0] as OrderEventDdb | null;
+    }
 }
